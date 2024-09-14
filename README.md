@@ -20,15 +20,15 @@ To build the DAML project, run:
 
 ```bash
 daml build
-
+```
 This will generate the .dar file for the project located in the dist directory.
 
 2. Running the Project
 Start the DAML application by running:
 
-
+```
 daml start
-
+```
 
 This will start a local ledger, navigator, and JSON API.
 3. Running the Test Script
@@ -36,7 +36,7 @@ To test the loan approval workflow, execute the test script using the following 
 
 ```bash
 daml script --dar .daml/dist/LoanApprovalProject-0.0.1.dar --script-name TestLoanApproval:testLoanApproval --ide-ledger
-
+```
 
 This script tests two scenarios:
 The approval of the first LoanRequest.
@@ -47,7 +47,7 @@ After running the script, the following output will be generated:
 ```bash
 [DA.Internal.Prelude:557]: ("Loan 1:",[(0050a4a365c664088a04f68b92f9594199c2a7f10ed8effe0cd048a980b3dbc21f,Loan {borrower = 'Borrower', bank = 'Bank', amount = 100.0})])
 [DA.Internal.Prelude:557]: ("Active LoanRequest 2:",[(00418297da0078c38edd349bf27d249a5b40ab516c83eb0b3830bd4cd8242dd04c,LoanRequest {borrower = 'Borrower', bank = 'Bank', amount = 200.0})])
-
+```
 
 Loan 1: Shows that the first LoanRequest was approved, and the Loan contract was created with a loan amount of 100.0.
 Active LoanRequest 2: Confirms that the second LoanRequest is still active, with a loan amount of 200.0.
