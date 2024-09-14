@@ -26,7 +26,7 @@ This will generate the .dar file for the project located in the dist directory.
 2. Running the Project
 Start the DAML application by running:
 
-```bash
+```bas
 daml start
 
 
