@@ -53,12 +53,18 @@ Loan 1: Shows that the first LoanRequest was approved, and the Loan contract was
 Active LoanRequest 2: Confirms that the second LoanRequest is still active, with a loan amount of 200.0.
 Explanation of Test Cases
 Test Case 1: Approve the First Loan Request
-The borrower submits two loan requests, one for 100.0 and another for 200.0.
+The borrower submits two loan requests:
+
+One for 100.0
+Another for 200.0
 The bank approves the first loan request.
+
 The system verifies that a Loan contract is created for the approved request.
+
 Test Case 2: Keep the Second Loan Request Active
 The second loan request remains unapproved, ensuring that it stays active on the ledger.
+
 The debug output confirms that the second LoanRequest is still present.
 
 Conclusion
-This project demonstrates a simple loan approval process in DAML, with tests to ensure that requests can be approved or remain active based on the workflow logic.
+This project demonstrates a simple loan approval process in DAML. The tests ensure that requests can either be approved or remain active based on the workflow logic.
