@@ -1,217 +1,62 @@
-# Angular Components Guide
+# Loan Approval DAML Project
 
-## Table of Contents
-1. [Introduction](#introduction)
-2. [Component Structure](#component-structure)
-3. [Component Metadata](#component-metadata)
-4. [Component Lifecycle Hooks](#component-lifecycle-hooks)
-5. [Component Communication](#component-communication)
-6. [Input and Output Decorators](#input-and-output-decorators)
-7. [Component Styles](#component-styles)
-8. [View Encapsulation](#view-encapsulation)
-9. [Dynamic Components](#dynamic-components)
-10. [Component Inheritance](#component-inheritance)
-11. [Conclusion](#conclusion)
+This project implements a basic loan approval workflow using DAML. It consists of two templates:
+1. `LoanRequest` - Represents a request for a loan.
+2. `Loan` - Represents an approved loan.
 
-## Introduction
+## Project Structure
 
-An **Angular Component** is a core building block of Angular applications, encapsulating a portion of the user interface. Each component manages its own view and logic, making it reusable and modular. Components are made up of three key elements:
-1. **TypeScript Class**: Manages component logic and data.
-2. **HTML Template**: Defines the structure and layout of the component's view.
-3. **CSS/SCSS Styles**: Specifies the appearance of the component.
+- `Main.daml`: Defines the templates and loan approval logic.
+- `TestLoanApproval.daml`: Contains test scripts to validate the loan approval process with additional test cases.
 
----
+## Steps to Build and Run the Project
 
-## Component Structure
+### Prerequisites
+- Install DAML SDK (version 2.9.4 used in this project)
+- Ensure you have set up a DAML environment.
 
-An Angular component typically consists of the following files:
+### 1. Building the Project
+To build the DAML project, run:
+```bash
+daml build
 
-1. **TypeScript File (`.ts`)**:
-   Contains the class, logic, and methods for the component.
+This will generate the .dar file for the project located in the dist directory.
 
-2. **HTML Template (`.html`)**:
-   Defines the HTML structure and bindings for the component's view.
+2. Running the Project
+Start the DAML application by running:
+```bash
+daml start
 
-3. **CSS/SCSS File (`.css` or `.scss`)**:
-   Provides styles specific to the component.
+This will start a local ledger, navigator, and JSON API.
+3. Running the Test Script
+To test the loan approval workflow, execute the test script using the following command:
 
-4. **Spec File (`.spec.ts`)** (Optional):
-   Contains unit tests for the component.
+```bash
+daml script --dar .daml/dist/LoanApprovalProject-0.0.1.dar --script-name TestLoanApproval:testLoanApproval --ide-ledger
 
-### Example Component:
+This script tests two scenarios:
 
-1. **Component Class (`hello-world.component.ts`)**:
+The approval of the first LoanRequest.
+Verifying that the second LoanRequest remains active.
 
-```typescript
-import { Component } from '@angular/core';
+4. Output
+After running the script, the following output will be generated:
 
-@Component({
-  selector: 'app-hello-world',      // Custom HTML tag for this component
-  templateUrl: './hello-world.component.html',  // Path to the HTML template
-  styleUrls: ['./hello-world.component.css']    // Path to the CSS/SCSS styles
-})
-export class HelloWorldComponent {
-  message: string = 'Hello, World!';   // Property used in the template
+```bash
+[DA.Internal.Prelude:557]: ("Loan 1:",[(0050a4a365c664088a04f68b92f9594199c2a7f10ed8effe0cd048a980b3dbc21f,Loan {borrower = 'Borrower', bank = 'Bank', amount = 100.0})])
+[DA.Internal.Prelude:557]: ("Active LoanRequest 2:",[(00418297da0078c38edd349bf27d249a5b40ab516c83eb0b3830bd4cd8242dd04c,LoanRequest {borrower = 'Borrower', bank = 'Bank', amount = 200.0})])
 
-  // Method to update the message property
-  updateMessage(newMessage: string) {
-    this.message = newMessage;
-  }
-}
-Component Template (hello-world.component.html):
-html
-Copy code
-<div>
-  <h1>{{ message }}</h1>  <!-- Data binding for the message property -->
-  <button (click)="updateMessage('Hi, Angular!')">Change Message</button>
-</div>
-Component Styles (hello-world.component.css):
-css
-Copy code
-h1 {
-  color: blue;
-}
+Loan 1: Shows that the first LoanRequest was approved, and the Loan contract was created with a loan amount of 100.0.
+Active LoanRequest 2: Confirms that the second LoanRequest is still active, with a loan amount of 200.0.
 
-button {
-  background-color: #007bff;
-  color: white;
-  padding: 10px;
-}
-Component Metadata
-The @Component decorator provides metadata that Angular uses to configure and instantiate the component. This metadata includes:
+Explanation of Test Cases
+Test Case 1: Approve the First Loan Request
+The borrower submits two loan requests, one for 100.0 and another for 200.0.
+The bank approves the first loan request.
+The system verifies that a Loan contract is created for the approved request.
+Test Case 2: Keep the Second Loan Request Active
+The second loan request remains unapproved, ensuring that it stays active on the ledger.
+The debug output confirms that the second LoanRequest is still present.
 
-selector: Defines the custom HTML tag to use for the component.
-templateUrl: Points to the HTML file for the component's view.
-styleUrls: Specifies paths to CSS/SCSS files for component-specific styles.
-providers: Lists services available to this component.
-animations: Specifies animations applied to the component.
-Example:
-typescript
-Copy code
-@Component({
-  selector: 'app-example',
-  templateUrl: './example.component.html',
-  styleUrls: ['./example.component.css'],
-  providers: [ExampleService],
-  animations: [exampleAnimation]
-})
-Component Lifecycle Hooks
-Angular components have a lifecycle with several phases. Lifecycle hooks are methods that allow you to execute code at different stages of a component's life.
-
-Common Lifecycle Hooks:
-ngOnInit: Called once the component is initialized.
-ngOnChanges: Invoked when input properties change.
-ngOnDestroy: Called before the component is destroyed.
-Example:
-typescript
-Copy code
-export class LifecycleComponent implements OnInit, OnDestroy {
-  
-  ngOnInit() {
-    console.log('Component initialized');
-  }
-
-  ngOnDestroy() {
-    console.log('Component destroyed');
-  }
-}
-Component Communication
-Components often need to communicate with each other. This can be achieved using @Input and @Output decorators.
-
-1. Parent to Child Communication:
-Use the @Input decorator to pass data from a parent component to a child component.
-
-2. Child to Parent Communication:
-Use the @Output decorator with an EventEmitter to send data from a child component to a parent component.
-
-Input and Output Decorators
-@Input:
-The @Input decorator allows a parent component to bind properties to a child component.
-
-typescript
-Copy code
-export class ChildComponent {
-  @Input() childMessage: string;  // Message passed from the parent
-}
-@Output:
-The @Output decorator allows a child component to emit events to the parent component.
-
-typescript
-Copy code
-export class ChildComponent {
-  @Output() messageEvent = new EventEmitter<string>();
-
-  sendMessage() {
-    this.messageEvent.emit('Hello from Child!');
-  }
-}
-Component Styles
-Each Angular component can have its own styles, scoped specifically to the component. This prevents styles from leaking out or affecting other components.
-
-Example:
-css
-Copy code
-h1 {
-  color: red;
-}
-Inline Styles:
-Styles can also be defined directly in the @Component decorator using the styles array.
-
-typescript
-Copy code
-@Component({
-  selector: 'app-inline-style',
-  template: `<h1>Inline Styled Component</h1>`,
-  styles: [`h1 { color: green; }`]
-})
-View Encapsulation
-Angular provides three encapsulation modes to control how styles are applied to components:
-
-Emulated: Default mode. Styles are scoped to the component.
-None: No encapsulation. Styles are applied globally.
-Shadow DOM: Uses Shadow DOM for encapsulation.
-Example:
-typescript
-Copy code
-@Component({
-  selector: 'app-encapsulation',
-  template: `<h1>Encapsulation Example</h1>`,
-  encapsulation: ViewEncapsulation.None   // No encapsulation
-})
-Dynamic Components
-Dynamic components can be created and inserted into the view at runtime using Angular’s ComponentFactoryResolver.
-
-Example:
-typescript
-Copy code
-@Component({
-  selector: 'app-dynamic-component',
-  template: `<ng-container #container></ng-container>`
-})
-export class DynamicComponent implements AfterViewInit {
-  @ViewChild('container', { read: ViewContainerRef }) container;
-
-  constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
-
-  ngAfterViewInit() {
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(SomeOtherComponent);
-    this.container.createComponent(componentFactory);
-  }
-}
-Component Inheritance
-Component inheritance allows you to reuse code by extending a base component class.
-
-Example:
-typescript
-Copy code
-export class BaseComponent {
-  message: string = 'Hello from Base Component';
-}
-
-@Component({
-  selector: 'app-child-component',
-  template: `<p>{{ message }}</p>`
-})
-export class ChildComponent extends BaseComponent { }
 Conclusion
-Angular components are essential for building modular, reusable, and maintainable applications. Understanding their structure, metadata, lifecycle hooks, communication patterns, and styles is crucial for effective Angular development.
+This project demonstrates a simple loan approval process in DAML, with tests to ensure that requests can be approved or remain active based on the workflow logic.
